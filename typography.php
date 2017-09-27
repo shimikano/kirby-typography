@@ -3,7 +3,7 @@
 /**
  *  This file is part of Kirby-Typography. A port of wp-Typography
  *  for Kirby CMS (https://getkirby.com).
- *  
+ *
  *  Copyright of Kirby-Typography:
  *  2016 Fabian Michael.
  *
@@ -40,15 +40,11 @@ define('TYPOGRAPHY_PLUGIN_BASE_DIR', __DIR__);
 
 load([
   // TypeSetter classes
-  'kirby\\plugins\\typography\\kirbytypography'        => 'lib' . DS . 'kirbytypography.php',
   'kirby\\plugins\\typography\\cache'                  => 'lib' . DS . 'cache.php',
   'kirby\\plugins\\typography\\component\\typography'  => 'lib' . DS . 'component' . DS . 'typography.php',
-      
-  // WP Typography classes    
-  'php_typography\\parse_text'                         => 'php-typography' . DS . 'class-parse-text.php',
-  'php_typography\\php_typography'                     => 'php-typography' . DS . 'class-php-typography.php',
-    
 ], TYPOGRAPHY_PLUGIN_BASE_DIR);
+
+require __DIR__ . '/vendor/autoload.php';
 
 // Register plugin component
 $kirby->set('component', 'smartypants', 'kirby\\plugins\\typography\\component\\typography');
