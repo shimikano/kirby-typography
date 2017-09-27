@@ -74,7 +74,7 @@ $ git submodule add https://github.com/fabianmichael/kirby-typography.git site/p
 
 The plugin is enabled by default and replaces the [SmartyPants](https://michelf.ca/projects/php-smartypants/) parser of your Kirby installation. That means, typographic enhancements are applied to *Kirbytext* by default.
 
-The default typography settings of PHP-Typography are used. You can change any settings in your `config.php` file.
+The default typography settings of PHP-Typography are used. You can change any settings in your `config.php` file, cf. below.
 
 ### 3.1 CSS and JavaScript Setup
 
@@ -85,7 +85,7 @@ Add `<?= css('assets/plugins/typography/css/typography.css') ?>` to your templat
 
 ## 4 Configuration
 
-Use the `typography.settings` option in your `config.php` file to customize the PHP-Typography settings:
+Use the `typography.settings` option in your `config.php` file to customize the PHP-Typography settings. Note that the value is a callback *function* rather than a simple string value.
 
 ```php
 c::set('typography.settings' => function($settings) {
@@ -100,7 +100,7 @@ c::set('typography.settings' => function($settings) {
 }
 ```
 
-Please refer to the PHP-Typography documentation for the settings.
+Please refer to the PHP-Typography documentation for the supported settings.
 
 ### 4.1 Localization for Multilingual Sites
 
@@ -108,16 +108,14 @@ If your Kirby installation is configured for multiple languages, you might want 
 
 ```php
 # site/config/config.php
-// settings shared across languages
-c::set('typography.settings' => function($settings) {
+c::set('typography.settings' => function($settings) { // settings shared across languages
   $settings->set_hyphenation(true);
 }
 ```
 
 ```php
 # site/languages/fr.php
-// language specific settings
-l::set('typography.settings' => function($settings) {
+l::set('typography.settings' => function($settings) { // language specific settings
   $settings->set_smart_quotes_primary('doubleGuillemetsFrench');
   $settings->set_smart_quotes_secondary('doubleCurled');
 
@@ -133,7 +131,7 @@ l::set('typography.settings' => function($settings) {
 }
 ```
 
-## 5 Recommended Settings for Different Languages
+## 5 Recommended Settings for Various Languages
 
 The following recommendations are based on common typographic conventions of some specific languages. That does not mean that you have to stick to them, but they make a good starting point for your own settings. Is your language missing in this list? Feel free to [create an issue](https://github.com/fabianmichael/kirby-typography/issues/new) or pull request and I will add settings for your language to the list.
 
