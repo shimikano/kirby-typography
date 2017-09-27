@@ -47,8 +47,6 @@ class Typography extends \Kirby\Component\Smartypants {
   private $settingsHash;
 
   function __construct(\Kirby $kirby) {
-    // print_r($kirby->options());
-
     parent::__construct($kirby);
 
     $this->typo = new \PHP_Typography\PHP_Typography();

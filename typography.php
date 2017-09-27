@@ -40,21 +40,17 @@ define('TYPOGRAPHY_PLUGIN_BASE_DIR', __DIR__);
 
 load([
   // TypeSetter classes
-  'kirby\\plugins\\typography\\cache'                  => 'lib' . DS . 'cache.php',
-  'kirby\\plugins\\typography\\component\\typography'  => 'lib' . DS . 'component' . DS . 'typography.php',
+  'kirby\\plugins\\typography\\cache'                 => 'lib' . DS . 'cache.php',
+  'kirby\\plugins\\typography\\component\\typography' => 'lib' . DS . 'component' . DS . 'typography.php',
 ], TYPOGRAPHY_PLUGIN_BASE_DIR);
 
+// Autoload the vendor classes
 require __DIR__ . '/vendor/autoload.php';
 
 // Register plugin component
 $kirby->set('component', 'smartypants', 'kirby\\plugins\\typography\\component\\typography');
 
 // Register dashboard widget if not disabled in config file
-if ( c::get('typography.widget') === null ) {
-  c::set('typography.widget', true); // enable by default, if not explicitly set to `false`.
-  $kirby->options['typography.widget'] = true;
-}
-
-if ($kirby->option('typography.widget') !== false) {
+if (c::get('typography.widget', true) !== false) {
   require_once __DIR__ . DS . 'widgets' . DS . 'typography' . DS . 'bootstrap.php';
 }
