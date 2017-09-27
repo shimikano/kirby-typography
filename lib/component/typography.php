@@ -1,13 +1,13 @@
 <?php
 
 /**
- *  This file is part of Kirby-Typography. A port of wp-Typography
+ *  This file is part of Kirby-Typography. A wrapper of PHP-Typography
  *  for Kirby CMS (https://getkirby.com).
  *
  *  Copyright of Kirby-Typography:
  *  2016 Fabian Michael.
  *
- *  Copyright of wp-Typography (included in this package):
+ *  Copyright of PHP-Typography (included in this package):
  *	2014-2016 Peter Putzer.
  *	2012-2013 Marie Hogebrandt.
  *	2009-2011 KINGdesk, LLC.
