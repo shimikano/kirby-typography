@@ -42,26 +42,12 @@ class Typography extends \Kirby\Component\Smartypants {
 
   private $typo;
 
-  private $settings;
-
-  private $settingsHash;
+  private $settingsAndHash;
 
   function __construct(\Kirby $kirby) {
     parent::__construct($kirby);
 
     $this->typo = new \PHP_Typography\PHP_Typography();
-
-    $settings = new \PHP_Typography\Settings();
-
-    $this->configureSettings(c::get('typography.settings'), $settings);
-
-    if ($this->kirby->site->multilang()) {
-      // TODO to be tested - probably, the languages are not loaded at this time, so we'd need to defer this and also do the book keeping for $this->settingsHash
-      $this->configureSettings(l::get('typography.settings'), $settings);
-    }
-
-    $this->settings = $settings;
-    $this->settingsHash = $settings->get_hash();
   }
 
   private function configureSettings($callable, $settings) {
@@ -70,34 +56,64 @@ class Typography extends \Kirby\Component\Smartypants {
     }
   }
 
+  private function settingsAndHash() {
+    // we have to construct the settings lazily since the languages are not loaded at construction/configuration time of this component
+
+    if (!$this->settingsAndHash) {
+      $settings = new \PHP_Typography\Settings();
+
+      $this->configureSettings(c::get('typography.settings'), $settings);
+
+      if ($this->kirby->site->multilang()) {
+        $this->configureSettings(l::get('typography.settings'), $settings);
+      }
+
+      $this->settingsAndHash = new SettingsAndHash($settings);
+    }
+
+    return $this->settingsAndHash;
+  }
+
   private function hash($text) {
-    return md5($this->settingsHash . $text);
+    return md5($this->settingsAndHash()->hash . $text);
   }
 
   private function processText($text) {
-    return $this->typo->process($text, $this->settings);
+    return $this->typo->process($text, $this->settingsAndHash()->settings);
   }
 
   public function parse($text, $force = false) {
     if (!c::get('typography', true)) {
       return $text;
     } else {
-
       if (c::get('typography.debug', false)) {
         // Skip caching when in debug mode
         return $this->processText($text);
       }
 
-      $cache      = Cache::instance();
-      $cacheKey   = $this->hash($text);
-      $parsedText = $cache->get($cacheKey, false);
+      $cache         = Cache::instance();
+      $cacheKey      = $this->hash($text);
+      $processedText = $cache->get($cacheKey, false);
 
-      if ($parsedText === false) {
-        $parsedText = $this->processText($text);
-        $cache->set($cacheKey, $parsedText);
+      if ($processedText === false) {
+        $processedText = $this->processText($text);
+        $cache->set($cacheKey, $processedText);
       }
 
-      return $parsedText;
+      return $processedText;
     }
   }
+}
+
+class SettingsAndHash {
+
+  public $settings;
+
+  public $hash;
+
+  function __construct($settings) {
+    $this->settings = $settings;
+    $this->hash = md5(print_r($settings, true)); // previously we used $settings->get_hash(), but cf. https://github.com/mundschenk-at/php-typography/issues/27
+  }
+
 }
