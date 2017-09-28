@@ -88,7 +88,7 @@ Add `<?= css('assets/plugins/typography/css/typography.css') ?>` to your templat
 Use the `typography.settings` option in your `config.php` file to customize the PHP-Typography settings. Note that the value is a callback *function* rather than a simple string value.
 
 ```php
-c::set('typography.settings' => function($settings) {
+c::set('typography.settings', function($settings) {
   $settings->set_french_punctuation_spacing(false);
   $settings->set_smart_dashes_style(\PHP_Typography\Settings\Dash_Style::INTERNATIONAL);
 
@@ -97,7 +97,7 @@ c::set('typography.settings' => function($settings) {
 
   $settings->set_hyphenation(true);
   $settings->set_hyphenation_language('de');
-}
+});
 ```
 
 Please refer to the PHP-Typography documentation for the supported settings.
@@ -108,27 +108,27 @@ If your Kirby installation is configured for multiple languages, you might want 
 
 ```php
 # site/config/config.php
-c::set('typography.settings' => function($settings) { // settings shared across languages
+c::set('typography.settings', function($settings) { // settings shared across languages
   $settings->set_hyphenation(true);
-}
+});
 ```
 
 ```php
 # site/languages/fr.php
-l::set('typography.settings' => function($settings) { // language specific settings
+l::set('typography.settings', function($settings) { // language specific settings
   $settings->set_smart_quotes_primary('doubleGuillemetsFrench');
   $settings->set_smart_quotes_secondary('doubleCurled');
 
   $settings->set_hyphenation_language('fr');
-}
+});
 
 # site/languages/de.php
-l::set('typography.settings' => function($settings) {
+l::set('typography.settings', function($settings) {
   $settings->set_smart_quotes_primary('doubleLow9Reversed');
   $settings->set_smart_quotes_secondary('singleLow9Reversed');
 
   $settings->set_hyphenation_language('de');
-}
+});
 ```
 
 ## 5 Recommended Settings for Various Languages
