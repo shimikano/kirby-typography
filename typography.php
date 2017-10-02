@@ -50,7 +50,11 @@ require __DIR__ . '/vendor/autoload.php';
 // Register plugin component
 $kirby->set('component', 'smartypants', 'kirby\\plugins\\typography\\component\\typography');
 
-// Register dashboard widget if not disabled in config file
-if (c::get('typography.widget', true) !== false) {
+function can_access_widget($user) {
+  return $user && in_array($user->role(), c::get('typography.widget.roles', ['admin']));
+}
+
+// Register dashboard widget if allowed
+if (can_access_widget(site()->user())) {
   require_once __DIR__ . DS . 'widgets' . DS . 'typography' . DS . 'bootstrap.php';
 }

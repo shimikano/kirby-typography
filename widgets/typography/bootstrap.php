@@ -25,9 +25,10 @@ $kirby->set('route', [
   'pattern' => 'plugins/typography/widget/api/(:any)',
   'action'  => function($action) {
 
-    $user = site()->user()->current();
-    if (!$user || !$user->isAdmin()) {
-      return Response::error('Only administrators can access the widget API of the typography plugin.', 401);
+    $user = site()->user();
+
+    if (!can_access_widget($user)) {
+      return Response::error('Access to the widget API of the typography plugin is denied.', 401);
     }
 
     $l = kirby_typography_widget_get_translations($user->language());
