@@ -3,6 +3,7 @@
 namespace Kirby\Plugins\Typography;
 use Response;
 use Kirby\Plugins\Typography\KirbyTypography;
+use C;
 
 // This helper function looks pretty ugly … but this is a temporary solution
 // until the Kirby panel fully supports localization.
@@ -34,9 +35,13 @@ $kirby->set('route', [
     $l = kirby_typography_widget_get_translations($user->language());
 
     function status($l) {
-      $data = Cache::instance()->status();
+      if (c::get('typography.widget.cache.status', true)) {
+        $data = Cache::instance()->status(); // this can take ages for a big cache directory, so we offer the option to disable this
 
-      return Response::success(sprintf($l['typography.widget.cache.status'], round($data['size'] / 1024, 2), $data['files']), $data);
+        return Response::success(sprintf($l['typography.widget.cache.status'], round($data['size'] / 1024, 2), $data['files']), $data);
+      }
+
+      return Response::success($l['typography.widget.cache.status.disabled']);
     }
 
     switch ($action) {
