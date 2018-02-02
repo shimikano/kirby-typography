@@ -1,6 +1,6 @@
 {
   "name": "typography",
-  "version": "1.0.0-beta1",
+  "version": "1.0.1",
   "description": "This is wrapper of [PHP-Typography](https://github.com/mundschenk-at/php-typography) for Kirby CMS.",
   "main": "gulpfile.js",
   "scripts": {
