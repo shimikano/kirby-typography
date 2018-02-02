@@ -1,15 +1,15 @@
 {
   "name": "typography",
   "version": "1.0.0-beta1",
-  "description": "This is wrapper of [PHP-Typography](https://github.com/mundschenk-at/php-typography) for Kirby CMS. This plugin enhances the typography of you kirby-powered website. Think of it a more advanced alternative to the built-in `SmartyPants` parser.",
+  "description": "This is wrapper of [PHP-Typography](https://github.com/mundschenk-at/php-typography) for Kirby CMS.",
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "kirby-plugin",
-  "author": "Fabian Michael",
+  "author": "shimikano",
   "license": "GPL-3.0",
-  "repository": "https://github.com/fabianmichael/kirby-typography",
+  "repository": "https://github.com/shimikano/kirby-typography",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-doctoc": "^0.1.4",
