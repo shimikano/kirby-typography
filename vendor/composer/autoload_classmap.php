@@ -45,6 +45,7 @@ return array(
     'PHP_Typography\\Fixes\\Token_Fixes\\Wrap_Hard_Hyphens_Fix' => $vendorDir . '/mundschenk-at/php-typography/src/fixes/token-fixes/class-wrap-hard-hyphens-fix.php',
     'PHP_Typography\\Fixes\\Token_Fixes\\Wrap_URLs_Fix' => $vendorDir . '/mundschenk-at/php-typography/src/fixes/token-fixes/class-wrap-urls-fix.php',
     'PHP_Typography\\Hyphenator' => $vendorDir . '/mundschenk-at/php-typography/src/class-hyphenator.php',
+    'PHP_Typography\\Hyphenator\\Cache' => $vendorDir . '/mundschenk-at/php-typography/src/hyphenator/class-cache.php',
     'PHP_Typography\\Hyphenator\\Trie_Node' => $vendorDir . '/mundschenk-at/php-typography/src/hyphenator/class-trie-node.php',
     'PHP_Typography\\Hyphenator_Cache' => $vendorDir . '/mundschenk-at/php-typography/src/class-hyphenator-cache.php',
     'PHP_Typography\\PHP_Typography' => $vendorDir . '/mundschenk-at/php-typography/src/class-php-typography.php',

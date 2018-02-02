@@ -37,7 +37,7 @@ use \PHP_Typography\Settings\Quote_Style;
  *
  * @since 4.0.0
  */
-class Settings implements \ArrayAccess {
+class Settings implements \ArrayAccess, \JsonSerializable {
 
 	/**
 	 * The current no-break narrow space character.
@@ -77,12 +77,16 @@ class Settings implements \ArrayAccess {
 	/**
 	 * An array containing all self-closing HTML5 tags.
 	 *
+	 * @deprecated 5.2.0 Not used anymore, will be removed in 6.0.0.
+	 *
 	 * @var array
 	 */
 	protected $self_closing_tags = [];
 
 	/**
 	 * A array of tags we should never touch.
+	 *
+	 * @deprecated 5.2.0 Use DOM::inappropriate_tags() if necessary. Will be removed in 6.0.0.
 	 *
 	 * @var array
 	 */
@@ -187,6 +191,24 @@ class Settings implements \ArrayAccess {
 	}
 
 	/**
+	 * Provides a JSON serialization of the settings.
+	 *
+	 * @return mixed
+	 */
+	public function jsonSerialize() {
+		return array_merge(
+			$this->data,
+			[
+				'no_break_narrow_space'  => $this->no_break_narrow_space,
+				'primary_quotes'         => "{$this->primary_quote_style->open()}|{$this->primary_quote_style->close()}",
+				'secondary_quotes'       => "{$this->secondary_quote_style->open()}|{$this->secondary_quote_style->close()}",
+				'dash_style'             => "{$this->dash_style->interval_dash()}|{$this->dash_style->interval_space()}|{$this->dash_style->parenthetical_dash()}|{$this->dash_style->parenthetical_space()}",
+				'custom_units'           => $this->custom_units,
+			]
+		);
+	}
+
+	/**
 	 * Retrieves the current non-breaking narrow space character (either the
 	 * regular non-breaking space &nbsp; or the the true non-breaking narrow space &#8239;).
 	 *
@@ -246,10 +268,10 @@ class Settings implements \ArrayAccess {
 		$this->secondary_quote_style = new Settings\Simple_Quotes( U::SINGLE_QUOTE_OPEN, U::SINGLE_QUOTE_CLOSE );
 
 		// Set up some arrays for quick HTML5 introspection.
-		$this->self_closing_tags = array_filter( array_keys( \Masterminds\HTML5\Elements::$html5 ), function( $tag ) {
-			return \Masterminds\HTML5\Elements::isA( $tag, \Masterminds\HTML5\Elements::VOID_TAG );
-		} );
-		$this->inappropriate_tags = [ 'iframe', 'textarea', 'button', 'select', 'optgroup', 'option', 'map', 'style', 'head', 'title', 'script', 'applet', 'object', 'param' ];
+		$this->self_closing_tags  = array_filter( array_keys( \Masterminds\HTML5\Elements::$html5 ), function( $tag ) {
+				return \Masterminds\HTML5\Elements::isA( $tag, \Masterminds\HTML5\Elements::VOID_TAG );
+			} );
+		$this->inappropriate_tags = array_flip( DOM::inappropriate_tags() );
 
 		if ( $set_defaults ) {
 			$this->set_defaults();
@@ -368,8 +390,7 @@ class Settings implements \ArrayAccess {
 		// Ensure that we pass only lower-case tag names to XPath.
 		$tags = array_filter( array_map( 'strtolower', Strings::maybe_split_parameters( $tags ) ), 'ctype_alnum' );
 
-		// Self closing tags shouldn't be in $tags.
-		$this->data['ignoreTags'] = array_unique( array_merge( array_diff( $tags, $this->self_closing_tags ), $this->inappropriate_tags ) );
+		$this->data['ignoreTags'] = array_unique( array_merge( $tags, $this->inappropriate_tags ) );
 	}
 
 	/**
@@ -1023,14 +1044,17 @@ class Settings implements \ArrayAccess {
 	/**
 	 * Retrieves a unique hash value for the current settings.
 	 *
-	 * @param int $max_length The maximum number of bytes returned. Optional. Default 16.
+	 * @since 5.2.0 The new parameter $raw_output has been added.
+	 *
+	 * @param int  $max_length Optional. The maximum number of bytes returned (0 for unlimited). Default 16.
+	 * @param bool $raw_output Optional. Wether to return raw binary data for the hash. Default true.
 	 *
 	 * @return string A binary hash value for the current settings limited to $max_length.
 	 */
-	public function get_hash( $max_length = 16 ) {
-		$hash = md5( json_encode( $this->data ), true );
+	public function get_hash( $max_length = 16, $raw_output = true ) {
+		$hash = md5( json_encode( $this ), $raw_output );
 
-		if ( $max_length < strlen( $hash ) ) {
+		if ( $max_length < strlen( $hash ) && $max_length > 0 ) {
 			$hash = substr( $hash, 0, $max_length );
 		}
 

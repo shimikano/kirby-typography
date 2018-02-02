@@ -39,6 +39,7 @@ use \PHP_Typography\Settings\Quotes;
  * @uses PHP_Typography\Settings\Simple_Dashes
  * @uses PHP_Typography\Settings\Simple_Quotes
  * @uses PHP_Typography\Strings::_uchr
+ * @uses PHP_Typography\DOM::inappropriate_tags
  */
 class Settings_Test extends PHP_Typography_Testcase {
 	/**
@@ -72,6 +73,7 @@ class Settings_Test extends PHP_Typography_Testcase {
 	 * @uses PHP_Typography\Settings\Quote_Style::get_styled_quotes
 	 * @uses PHP_Typography\Strings::maybe_split_parameters
 	 * @uses PHP_Typography\Arrays::array_map_assoc
+	 * @uses PHP_Typography\DOM::inappropriate_tags
 	 */
 	public function test_set_defaults() {
 		$second_settings = new \PHP_Typography\Settings( false );
@@ -91,6 +93,7 @@ class Settings_Test extends PHP_Typography_Testcase {
 	 * @uses PHP_Typography\Settings\Quote_Style::get_styled_quotes
 	 * @uses PHP_Typography\Strings::maybe_split_parameters
 	 * @uses PHP_Typography\Arrays::array_map_assoc
+	 * @uses PHP_Typography\DOM::inappropriate_tags
 	 */
 	public function test_initialization() {
 		$s = $this->settings;
@@ -328,8 +331,7 @@ class Settings_Test extends PHP_Typography_Testcase {
 	 */
 	public function test_set_tags_to_ignore() {
 		$s = $this->settings;
-		$always_ignore = [ 'iframe', 'textarea', 'button', 'select', 'optgroup', 'option', 'map', 'style', 'head', 'title', 'script', 'applet', 'object', 'param' ];
-		$self_closing_tags = [ 'area', 'base', 'basefont', 'br', 'frame', 'hr', 'img', 'input', 'link', 'meta' ];
+		$always_ignore = [ 'iframe', 'textarea', 'button', 'select', 'optgroup', 'option', 'map', 'style', 'head', 'title', 'script', 'applet', 'object', 'param', 'svg', 'math' ];
 
 		// Default tags.
 		$s->set_tags_to_ignore( [ 'code', 'head', 'kbd', 'object', 'option', 'pre', 'samp', 'script', 'noscript', 'noembed', 'select', 'style', 'textarea', 'title', 'var', 'math' ] );
@@ -337,16 +339,11 @@ class Settings_Test extends PHP_Typography_Testcase {
 		foreach ( $always_ignore as $tag ) {
 			$this->assertContains( $tag, $s['ignoreTags'] );
 		}
-		foreach ( $self_closing_tags as $tag ) {
-			$this->assertNotContains( $tag, $s['ignoreTags'] );
-		}
 
 		// Auto-close tag and something else.
 		$s->set_tags_to_ignore( [ 'img', 'foo' ] );
 		$this->assertContains( 'foo', $s['ignoreTags'] );
-		foreach ( $self_closing_tags as $tag ) {
-			$this->assertNotContains( $tag, $s['ignoreTags'] );
-		}
+
 		foreach ( $always_ignore as $tag ) {
 			$this->assertContains( $tag, $s['ignoreTags'] );
 		}
@@ -1389,6 +1386,10 @@ class Settings_Test extends PHP_Typography_Testcase {
 	 * Tests get_hash.
 	 *
 	 * @covers ::get_hash
+	 * @covers ::jsonSerialize
+	 *
+	 * @uses PHP_Typography\Settings\Quote_Style::get_styled_quotes
+	 * @uses PHP_Typography\Strings::maybe_split_parameters
 	 */
 	public function test_get_hash() {
 		$s = $this->settings;
@@ -1401,7 +1402,32 @@ class Settings_Test extends PHP_Typography_Testcase {
 		$hash2 = $s->get_hash( 10 );
 		$this->assertEquals( 10, strlen( $hash2 ) );
 
-		$this->assertNotEquals( $hash1, $hash2 );
+		$s->set_smart_quotes_primary( \PHP_Typography\Settings\Quote_Style::SINGLE_CURLED );
+		$hash3 = $s->get_hash( 10 );
+		$this->assertEquals( 10, strlen( $hash3 ) );
+
+		$s->set_smart_quotes_secondary( $this->createMock( Quotes::class ) );
+		$hash4 = $s->get_hash( 10 );
+		$this->assertEquals( 10, strlen( $hash4 ) );
+
+		$s->set_smart_dashes_style( $this->createMock( Dashes::class ) );
+		$hash5 = $s->get_hash( 10 );
+		$this->assertEquals( 10, strlen( $hash5 ) );
+
+		$s->set_true_no_break_narrow_space( true );
+		$hash6 = $s->get_hash( 10 );
+		$this->assertEquals( 10, strlen( $hash6 ) );
+
+		$s->set_units( [ 'foo', 'bar' ] );
+		$hash7 = $s->get_hash( 10 );
+		$this->assertEquals( 10, strlen( $hash7 ) );
+
+		$this->assertNotEquals( $hash1, $hash2, 'Hashes should not be equal.' );
+		$this->assertNotEquals( $hash2, $hash3, 'Hashes after set_smart_quotes_primary are still equal.' );
+		$this->assertNotEquals( $hash3, $hash4, 'Hashes after set_smart_quotes_secondary are still equal.' );
+		$this->assertNotEquals( $hash4, $hash5, 'Hashes after set_smart_dashes_style are still equal.' );
+		$this->assertNotEquals( $hash5, $hash6, 'Hashes after set_true_no_break_narrow_space are still equal.' );
+		$this->assertNotEquals( $hash6, $hash7, 'Hashes after set_units are still equal.' );
 	}
 
 	/**

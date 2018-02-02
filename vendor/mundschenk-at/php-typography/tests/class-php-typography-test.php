@@ -25,7 +25,7 @@
 namespace PHP_Typography\Tests;
 
 use \PHP_Typography\PHP_Typography;
-use \PHP_Typography\Hyphenator_Cache;
+use \PHP_Typography\Hyphenator\Cache as Hyphenator_Cache;
 use \PHP_Typography\Settings;
 use \PHP_Typography\Fixes\Node_Fix;
 use \PHP_Typography\Fixes\Token_Fix;
@@ -39,7 +39,7 @@ use \PHP_Typography\U;
  * @usesDefaultClass PHP_Typography\PHP_Typography
  *
  * @uses PHP_Typography\PHP_Typography
- * @uses PHP_Typography\Hyphenator_Cache
+ * @uses PHP_Typography\Hyphenator\Cache
  * @uses PHP_Typography\Settings
  * @uses PHP_Typography\Settings\Simple_Dashes
  * @uses PHP_Typography\Settings\Simple_Quotes
@@ -138,18 +138,8 @@ class PHP_Typography_Test extends PHP_Typography_Testcase {
 			'applet',
 			'object',
 			'param',
-		];
-		$self_closing_tags = [
-			'area',
-			'base',
-			'basefont',
-			'br',
-			'frame',
-			'hr',
-			'img',
-			'input',
-			'link',
-			'meta',
+			'svg',
+			'math',
 		];
 
 		// Default tags.
@@ -177,16 +167,10 @@ class PHP_Typography_Test extends PHP_Typography_Testcase {
 		foreach ( $always_ignore as $tag ) {
 			$this->assertContains( $tag, $s['ignoreTags'] );
 		}
-		foreach ( $self_closing_tags as $tag ) {
-			$this->assertNotContains( $tag, $s['ignoreTags'] );
-		}
 
 		// Auto-close tag and something else.
 		$s->set_tags_to_ignore( [ 'img', 'foo' ] );
 		$this->assertContains( 'foo', $s['ignoreTags'] );
-		foreach ( $self_closing_tags as $tag ) {
-			$this->assertNotContains( $tag, $s['ignoreTags'] );
-		}
 		foreach ( $always_ignore as $tag ) {
 			$this->assertContains( $tag, $s['ignoreTags'] );
 		}
@@ -807,7 +791,7 @@ class PHP_Typography_Test extends PHP_Typography_Testcase {
 	 * @return array
 	 */
 	public function provide_smart_quotes_data() {
-		return array(
+		return [
 			[ '<span>"Double", \'single\'</span>', '<span>&ldquo;Double&rdquo;, &lsquo;single&rsquo;</span>' ],
 			[ '<p>"<em>This is nuts.</em>"</p>',   '<p>&ldquo;<em>This is nuts.</em>&rdquo;</p>' ],
 			[ '"This is so 1996", he said.',       '&ldquo;This is so 1996&rdquo;, he said.' ],
@@ -821,8 +805,8 @@ class PHP_Typography_Test extends PHP_Typography_Testcase {
 			[ 'Hier 1" "Typ 2" einsetzen',         'Hier 1&Prime; &ldquo;Typ 2&rdquo; einsetzen' ],
 			[ "2/4'",                              '2/4&prime;' ],
 			[ '3/44"',                             '3/44&Prime;' ],
-			array( '("Some" word',                      '(&ldquo;Some&rdquo; word' ),
-		);
+			[ '("Some" word',                      '(&ldquo;Some&rdquo; word' ],
+		];
 	}
 
 	/**
@@ -865,14 +849,33 @@ class PHP_Typography_Test extends PHP_Typography_Testcase {
 	}
 
 	/**
+	 * Test smart_quotes with French quotes (two characters!).
+	 *
+	 * @coversNothing
+	 *
+	 * @uses PHP_Typography\Text_Parser
+	 * @uses PHP_Typography\Text_Parser\Token
+	 */
+	public function test_smart_quotes_french() {
+		$html   = 'attributs <code>role="group"</code> et <code>aria-labelledby</code>';
+		$result = 'attributs <code>role="group"</code> et <code>aria-labelledby</code>';
+
+		$this->s->set_tags_to_ignore( [ 'code' ] );
+		$this->s->set_smart_quotes( true );
+		$this->s->set_smart_quotes_primary( Settings\Quote_Style::DOUBLE_GUILLEMETS_FRENCH );
+
+		$this->assertSame( $result, $this->clean_html( $this->typo->process( $html, $this->s ) ) );
+	}
+
+	/**
 	 * Provide data for testing smart quotes.
 	 *
 	 * @return array
 	 */
 	public function provide_smart_quotes_special_data() {
-		return array(
-			array( '("Some" word', '(&raquo;Some&laquo; word', 'doubleGuillemetsReversed', 'singleGuillemetsReversed' ),
-		);
+		return [
+			[ '("Some" word', '(&raquo;Some&laquo; word', 'doubleGuillemetsReversed', 'singleGuillemetsReversed' ],
+		];
 	}
 
 	/**
@@ -1008,8 +1011,8 @@ class PHP_Typography_Test extends PHP_Typography_Testcase {
 		return [
 			[ '<p>creme brulee</p>', '<p>crème brûlée</p>', 'en-US' ],
 			[ 'no diacritics to replace, except creme', 'no diacritics to replace, except crème', 'en-US' ],
-			[ 'ne vs. seine vs einzelne', 'né vs. seine vs einzelne', 'de-DE' ],
-			[ 'ne vs. sei&shy;ne vs einzelne', 'né vs. sei&shy;ne vs einzelne', 'de-DE' ],
+			[ 'ne vs. seine vs einzelne', 'né vs. seine vs einzelne', 'en-US' ],
+			[ 'ne vs. sei&shy;ne vs einzelne', 'né vs. sei&shy;ne vs einzelne', 'en-US' ],
 		];
 	}
 
@@ -1776,6 +1779,44 @@ class PHP_Typography_Test extends PHP_Typography_Testcase {
 		$this->s->set_unit_spacing( false );
 
 		$this->assertSame( $input, $this->clean_html( $this->typo->process( $input, $this->s ) ) );
+	}
+
+	/**
+	 * Provide data for testing unit_spacing.
+	 *
+	 * @return array
+	 */
+	public function provide_unit_spacing_dewidow_data() {
+		return [
+			[ 'It was 2 m.', 'It was&nbsp;2&#8239;m.' ],
+			[ 'Bis zu 3 km/h', 'Bis zu 3&#8239;km/h' ],
+			[ '5 sg 44 kg', '5 sg 44&#8239;kg' ],
+			[ 'Es hat 100 &deg;C', 'Es hat 100&#8239;&deg;C' ],
+		];
+	}
+
+	/**
+	 * Test unit_spacing with true narrow no-break space and dewidowing.
+	 *
+	 * @coversNothing
+	 *
+	 * @uses PHP_Typography\Text_Parser
+	 * @uses PHP_Typography\Text_Parser\Token
+	 *
+	 * @dataProvider provide_unit_spacing_dewidow_data
+	 *
+	 * @param string $input  HTML input.
+	 * @param string $result Expected result.
+	 */
+	public function test_unit_spacing_dewidow( $input, $result ) {
+		$this->s->set_unit_spacing( true );
+		$this->s->set_true_no_break_narrow_space( true );
+		$this->s->set_dewidow( true );
+		$this->s->set_max_dewidow_pull( 10 );
+		$this->s->set_max_dewidow_length( 3 );
+		$this->s->set_dewidow_word_number( 2 );
+
+		$this->assertSame( $result, $this->clean_html( $this->typo->process( $input, $this->s ) ) );
 	}
 
 	/**

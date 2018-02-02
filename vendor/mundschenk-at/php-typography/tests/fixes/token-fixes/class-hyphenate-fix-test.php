@@ -35,13 +35,14 @@ use \PHP_Typography\Settings;
  * @usesDefaultClass \PHP_Typography\Fixes\Token_Fixes\Hyphenate_Fix
  *
  * @uses ::__construct
- * @uses PHP_Typography\Hyphenator_Cache
+ * @uses PHP_Typography\DOM
  * @uses PHP_Typography\Settings
+ * @uses PHP_Typography\Strings
  * @uses PHP_Typography\Settings\Dash_Style
  * @uses PHP_Typography\Settings\Quote_Style
  * @uses PHP_Typography\Settings\Simple_Dashes
  * @uses PHP_Typography\Settings\Simple_Quotes
- * @uses PHP_Typography\Strings
+ * @uses PHP_Typography\Hyphenator\Cache
  * @uses PHP_Typography\Fixes\Token_Fixes\Abstract_Token_Fix
  */
 class Hyphenate_Fix_Test extends Token_Fix_Testcase {
@@ -201,7 +202,7 @@ class Hyphenate_Fix_Test extends Token_Fix_Testcase {
 
 		// Initial set-up.
 		$internal_cache = $this->getValue( $this->fix, 'cache' );
-		$cache          = new \PHP_Typography\Hyphenator_Cache();
+		$cache          = new \PHP_Typography\Hyphenator\Cache();
 
 		$this->fix->set_hyphenator_cache( $cache );
 

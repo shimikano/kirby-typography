@@ -113,7 +113,7 @@ class SettingsAndHash {
 
   function __construct($settings) {
     $this->settings = $settings;
-    $this->hash = md5(print_r($settings, true)); // previously we used $settings->get_hash(), but cf. https://github.com/mundschenk-at/php-typography/issues/27
+    $this->hash = $settings->get_hash(); // we used to run into the now fixed https://github.com/mundschenk-at/php-typography/issues/27
   }
 
 }

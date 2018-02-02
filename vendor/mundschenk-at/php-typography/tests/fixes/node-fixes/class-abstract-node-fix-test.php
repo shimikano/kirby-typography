@@ -35,6 +35,7 @@ use \PHP_Typography\Settings;
  *
  * @uses ::__construct
  * @uses PHP_Typography\Arrays
+ * @uses PHP_Typography\DOM
  * @uses PHP_Typography\Settings
  * @uses PHP_Typography\Settings\Dash_Style
  * @uses PHP_Typography\Settings\Quote_Style
@@ -108,6 +109,6 @@ class Abstract_Node_Fix_Test extends Node_Fix_Testcase {
 	 * @param string $result The trimmed string.
 	 */
 	public function test_remove_adjacent_characters( $string, $prev, $next, $result ) {
-		$this->assertSame( $result, $this->invokeStaticMethod( Node_Fixes\Abstract_Node_Fix::class, 'remove_adjacent_characters', [ $string, $prev, $next ] ) );
+		$this->assertSame( $result, $this->invokeStaticMethod( Node_Fixes\Abstract_Node_Fix::class, 'remove_adjacent_characters', [ $string, mb_strlen( $prev ), mb_strlen( $next ) ] ) );
 	}
 }

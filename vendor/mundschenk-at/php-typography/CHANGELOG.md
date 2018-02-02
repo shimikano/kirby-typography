@@ -1,5 +1,17 @@
 # Change History
 
+## 5.2.2 - November 25, 2017
+*   _Bugfix_: Remove some ambiguous diacritics replacements from the German language file.
+
+## 5.2.1 - October 27, 2017
+*   _Bugfix_: Dewidow didn't honor narrow spaces.
+
+## 5.2.0 - September 30, 2017
+*   _Change_: `Hyphenator_Cache` has been moved to `Hyphenator\Cache`.
+*   _Change_: New method `has_changed` for `Hyphenator\Cache`.
+*   _Change_: Properties `Settings::inappropriate_tags` and `Settings::self_closing_tags` have been deprecated.
+*   _Bugfix_: Settings hash omitted some properties (props @shimikano).
+
 ## 5.1.0 - September 10, 2017
 
 *   _Feature_: New hyphenation language "Swiss-German (Traditional)" added.

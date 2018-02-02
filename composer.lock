@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f9ebaa07541a8367d296d79597f591b7",
-    "content-hash": "313e036effff33133e7e6e9046604d41",
+    "hash": "f67667ba003b483d675db6b46acf7d2b",
+    "content-hash": "d8a2263dd9fb1a5716ad3a3bf13ec78b",
     "packages": [
         {
             "name": "masterminds/html5",
@@ -74,16 +74,16 @@
         },
         {
             "name": "mundschenk-at/php-typography",
-            "version": "v5.1.0",
+            "version": "v5.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mundschenk-at/php-typography.git",
-                "reference": "a5e1783cab26c0e644e2373f0585bafb496e1dcc"
+                "reference": "7cd4991d4ec56b47ec85266ef3072fad8173e324"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mundschenk-at/php-typography/zipball/a5e1783cab26c0e644e2373f0585bafb496e1dcc",
-                "reference": "a5e1783cab26c0e644e2373f0585bafb496e1dcc",
+                "url": "https://api.github.com/repos/mundschenk-at/php-typography/zipball/7cd4991d4ec56b47ec85266ef3072fad8173e324",
+                "reference": "7cd4991d4ec56b47ec85266ef3072fad8173e324",
                 "shasum": ""
             },
             "require": {
@@ -93,14 +93,14 @@
                 "php": ">=5.6.0"
             },
             "require-dev": {
-                "dealerdirect/phpcodesniffer-composer-installer": "^0.4.1",
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.4.3",
                 "ext-curl": "*",
                 "phpbench/phpbench": "^1.0@dev",
                 "phpstan/phpstan": "^0.8.0",
                 "phpunit/phpunit": "5.*||6.*",
-                "squizlabs/php_codesniffer": "^3.0.2",
-                "wimg/php-compatibility": "^8.0",
-                "wp-coding-standards/wpcs": "^0.13"
+                "squizlabs/php_codesniffer": "^3.1.0",
+                "wimg/php-compatibility": "^8.0.1",
+                "wp-coding-standards/wpcs": "^0.13.1"
             },
             "bin": [
                 "src/bin/update-patterns.php",
@@ -131,7 +131,7 @@
                 }
             ],
             "description": "A PHP library for improving your web typography",
-            "time": "2017-09-10 21:40:27"
+            "time": "2017-12-02 14:04:33"
         }
     ],
     "packages-dev": [],
