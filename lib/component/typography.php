@@ -82,7 +82,7 @@ class Typography extends \Kirby\Component\Smartypants {
     return $this->typo->process($text, $this->settingsAndHash()->settings);
   }
 
-  public function parse($text, $force = false) {
+  public function parse($text, $force = false, \Field $field = null) {
     if (!c::get('typography', true)) {
       return $text;
     } else {
