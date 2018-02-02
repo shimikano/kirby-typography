@@ -2,7 +2,7 @@
 
 This is wrapper of [PHP-Typography](https://github.com/mundschenk-at/php-typography) for Kirby CMS. This plugin enhances the typography of you kirby-powered website. Think of it a more advanced alternative to the built-in `SmartyPants` parser.
 
-Current version: `1.0.0-beta1`
+Based on [fabianmichael/kirby-typography](https://github.com/fabianmichael/kirby-typography), but using a more loose coupling to PHP-Typography for more flexibility, since PHP-Typography seems to evolve pretty fast.
 
 ***
 
@@ -101,6 +101,19 @@ c::set('typography.settings', function($settings) {
 ```
 
 Please refer to the PHP-Typography documentation for the supported settings.
+
+More settings:
+
+```php
+Setting                           Default Value
+
+'typography.cache.root'           kirby()->roots()->cache() . DS . 'plugins' . DS . 'typography'
+'typography.widget.roles'         ['admin']
+'typography.widget.cache.status'  true
+'typography.debug'                false
+'typography'                      true
+
+```
 
 ### 4.1 Localization for Multilingual Sites
 
